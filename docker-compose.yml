@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_data:/data/configdb
+      - ./database/init.mongodb.js:/docker-entrypoint-initdb.d/init.mongodb.js
+    expose:
+      - "27017"
+    ports:
+      - "27017:27017"
+    networks:
+      - mern_practice
+    command:
+      - --auth
+  backend:
+    build: ./backend
+    expose:
+      - "4000"
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_MONGODB_HOST: mongodb
+      NODE_ENV: dev
+    volumes:
+      - ./backend:/usr/src/app
+      - backend_data:/usr/src/app/node_modules
+    networks:
+      - mern_practice
+    depends_on:
+      - mongodb
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/src/app
+      - frontend_data:/usr/src/app/node_modules
+    networks:
+      - mern_practice
+    depends_on:
+      - mongodb
+      - backend
+
+volumes:
+  backend_data:
+  frontend_data:
+  mongodb_data:
+
+networks:
+  mern_practice:
