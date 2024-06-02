@@ -1,9 +1,8 @@
-const mongodbService = require('../../services/mongodb.service');
-
-const cardCollectionName = 'cards'
+const mongooseService = require('../../services/mongoose.service');
+const cardModel = require('./card.model');
 
 async function getCard() {
-    const foundCard = await mongodbService.findFirstDocument(cardCollectionName);
+    const foundCard = await mongooseService.findFirstDocument(cardModel.mongooseModel);
     console.log('Result', foundCard);
     return foundCard;
 }
